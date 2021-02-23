@@ -4,24 +4,18 @@ import click
 
 @click.command()
 @click.argument("filename",type=click.File("rb"))
-@click.option("--algorithm", default="md5", show_default=True,
-type=click.Choice(['MD5', 'SHA1', 'SHA256'], case_sensitive=False),
+@click.option("--hash", default="md5", show_default=True,
+type=click.Choice(hashlib.algorithms_guaranteed, case_sensitive=False),
 help="Hashing algorithm to use")
-def get_hash(filename, algorithm):
+def get_hash(filename, hash):
     """Returns the hash of FILENAME."""
-    if algorithm.upper() == 'MD%':
-        hashing = hashlib.md5()
-    elif algorithm.upper() == 'SHA1':
-        hashing = hashlib.sha1()
-    elif algorithm.upper() == 'SHA256':
-        hashing = hashlib.sha256()
+    if hash.lower() in hashlib.algorithms_guaranteed:
+        file_hash = getattr(hashlib,hash.lower())()
     else:
         return
 
-    file_hash = hashing
-
     while True:
-        while chunk := filename.read(1048576):
+        while chunk := filename.read(8192):
             file_hash.update(chunk)
         if not chunk:
             break
