@@ -11,8 +11,6 @@ def get_hash(filename, hash):
     """Returns the hash of FILENAME."""
     if hash.lower() in hashlib.algorithms_guaranteed:
         file_hash = getattr(hashlib,hash.lower())()
-    else:
-        return
 
     while True:
         while chunk := filename.read(8192):
